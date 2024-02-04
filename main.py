@@ -1,5 +1,6 @@
 import csv
-
+import plotly.express as px
+import pandas
 import requests
 from datetime import datetime
 
@@ -25,7 +26,7 @@ def get_path_time():
 
 def path_time_history():
     """save ISS position date and time history to csv file for mapping"""
-    with open("iss_data_path_history.csv", "w", newline="") as file:
+    with open("iss_data_path_history.csv", "a", newline="") as file:
         writer = csv.writer(file, delimiter=",")
         latitude, longitude = get_iss_data()
         date, time = get_path_time()
@@ -36,3 +37,11 @@ def path_time_history():
 path_time_history()
 
 
+def plotter():
+    df = pandas.read_csv("iss_data_path_history.csv")
+    figure = px.scatter_geo(df, lat="latitude", lon="longitude")
+    figure.update_layout(title="World Map", title_x=0.5)
+    figure.show()
+
+
+plotter()
