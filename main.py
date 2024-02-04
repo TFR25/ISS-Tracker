@@ -1,3 +1,5 @@
+import csv
+
 import requests
 from datetime import datetime
 
@@ -19,3 +21,18 @@ def get_path_time():
     iss_path_date = now.strftime("%m-%d-%y")
     iss_path_time = now.strftime("%H:%M:%S")
     return iss_path_date, iss_path_time
+
+
+def path_time_history():
+    """save ISS position date and time history to csv file for mapping"""
+    with open("iss_data_path_history.csv", "w", newline="") as file:
+        writer = csv.writer(file, delimiter=",")
+        latitude, longitude = get_iss_data()
+        date, time = get_path_time()
+        iss_data = [latitude, longitude, date, time]
+        writer.writerow(iss_data)
+
+
+path_time_history()
+
+
