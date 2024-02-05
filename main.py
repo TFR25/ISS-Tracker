@@ -36,13 +36,11 @@ def get_path_time():
     return iss_path_date, iss_path_time
 
 
-view_lat, view_lng = view_point_location()
-
-
 def path_time_history():
     """save ISS position date and time history to csv file for mapping"""
-    with open("iss_data_path_history.csv", "a", newline="") as file:
-        writer = csv.writer(file, delimiter=",")
+    view_lat, view_lng = view_point_location()
+    with open("iss_data_path_history.csv", "a", newline="") as outfile:
+        writer = csv.writer(outfile, delimiter=",")
         latitude, longitude = get_iss_data()
         date, time = get_path_time()
         iss_data = [latitude, longitude, date, time, view_lat, view_lng]
@@ -78,3 +76,25 @@ def plotter():
 plotter()
 
 distance = haversine(get_iss_data(), view_point_location(), unit="mi")
+
+
+def get_sunrise_sunset():
+    with open("data.json") as file:
+        private_data = json.load(file)
+        sun_api_parameters = {
+            "lat": private_data["my_location"]["lat"],
+            "lng": private_data["my_location"]["lng"],
+            "tzid": private_data["my_location"]["tzid"],
+            "formatted": 0
+        }
+    sunset_sunrise_api_data = requests.get("https://api.sunrise-sunset.org/json", params=sun_api_parameters)
+    sunset_sunrise_api_data.raise_for_status()
+    sun_data = sunset_sunrise_api_data.json()
+    with open("sunset_sunrise_api_data.json", "w") as outfile:
+        json.dump(sun_data, outfile)
+    sunset_sunrise = sunset_sunrise_api_data.json()
+    """Extract sunrise and sunset hours"""
+    sunrise = int(sunset_sunrise["results"]["sunrise"].split("T")[1].split(":")[0])
+    sunset = int(sunset_sunrise["results"]["sunset"].split("T")[1].split(":")[0])
+
+    return sunrise, sunset
