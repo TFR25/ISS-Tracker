@@ -3,10 +3,24 @@ import plotly.express as px
 import pandas
 import requests
 from datetime import datetime
+import json
 
 api_data = requests.get(url="http://api.open-notify.org/iss-now.json")
 api_data.raise_for_status()
 data = api_data.json()
+
+
+def view_point_location():
+    with open("data.json") as file:
+        view_point_position = json.load(file)
+        # replace view_point_lat and view_point_lng with your latitude and longitude. Utilize this website to find your
+        # latitude and longitude https://www.latlong.net
+        view_point_lat = view_point_position["my_location"]["lat"]
+        view_point_lng = view_point_position["my_location"]["lng"]
+        return view_point_lat, view_point_lng
+
+
+view_lat, view_lng = view_point_location()
 
 
 def get_iss_data():
@@ -30,7 +44,7 @@ def path_time_history():
         writer = csv.writer(file, delimiter=",")
         latitude, longitude = get_iss_data()
         date, time = get_path_time()
-        iss_data = [latitude, longitude, date, time]
+        iss_data = [latitude, longitude, date, time, view_lat, view_lng]
         writer.writerow(iss_data)
 
 
@@ -41,6 +55,8 @@ def plotter():
     df = pandas.read_csv("iss_data_path_history.csv")
     figure = px.scatter_geo(df, lat="latitude", lon="longitude")
     figure.update_layout(title="World Map", title_x=0.5)
+    figure.add_scattergeo(lat=df["view_point_lat"], lon=df["view_point_lng"],
+                          mode='markers', marker=dict(size=18, symbol="star", color="red"))
     figure.show()
 
 
