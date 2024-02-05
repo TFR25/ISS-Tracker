@@ -4,6 +4,7 @@ import pandas
 import requests
 from datetime import datetime
 import json
+from haversine import haversine
 
 api_data = requests.get(url="http://api.open-notify.org/iss-now.json")
 api_data.raise_for_status()
@@ -61,3 +62,5 @@ def plotter():
 
 
 plotter()
+
+distance = haversine(get_iss_data(), view_point_location(), unit='mi')
