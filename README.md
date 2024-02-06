@@ -1,4 +1,5 @@
 # ISS Tracker
+<div align="center"><img src="https://github.com/TFR25/ISS-Tracker/assets/101258399/673bbee4-2e2d-4fdb-8067-046634d27f09"></div>
 
 ## Introduction
 This Python program, ISS Tracker, is designed to track the International Space Station (ISS) in real-time and provide notifications when the ISS is within a certain distance from a specified location during nighttime. The program utilizes data from two APIs to obtain the current ISS location and sunrise/sunset times, as well as the Haversine formula to calculate the distance between the ISS and a specified viewing point.
